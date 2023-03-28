@@ -1,0 +1,11 @@
+#root {
+  width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.editor-container {
+  border: 1px solid #ccc;
+}
+.editor-paragraph {
+  margin-bottom: 8px;
+}

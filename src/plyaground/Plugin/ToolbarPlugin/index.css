@@ -1,0 +1,24 @@
+.toolbar-btn {
+  background-color: #eee;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.toolbar-btn[aria-checked="true"] {
+  background-color: #333;
+  color: #fff;
+}
+
+.editor-toolbar-container {
+  --itemGap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--itemGap);
+}
+
+.block-type-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--itemGap);
+}

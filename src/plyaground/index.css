@@ -1,0 +1,122 @@
+.my-editor-outter-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+
+.my-editor-container {
+  --containerPadding: 8px;
+  --borderActiveColor: tomato;
+  position: relative;
+  border: 2px solid #ccc;
+  padding: var(--containerPadding);
+  border-radius: 4px;
+}
+.my-editor-container.active {
+  border-color: var(--borderActiveColor);
+}
+.my-editor-content {
+  outline: none;
+}
+.editor-placeholder {
+  position: absolute;
+  color: #999;
+  top: var(--containerPadding);
+  left: var(--containerPadding);
+  pointer-events: none;
+  user-select: none;
+}
+
+.editor-paragraph {
+  margin: 0px;
+}
+.editor-content-h1,
+.editor-content-h2,
+.editor-content-h3 {
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+}
+.editor-content-h1 {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+.editor-content-h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.editor-content-h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.editor-quote {
+  margin: 16px 0;
+  padding: 4px 16px;
+  border-left: 4px solid #dddddd;
+}
+
+.editor-ul,
+.editor-ol {
+  margin: 0;
+}
+.editor-list-item-nested {
+  list-style-type: none;
+}
+.editor-list-item-check {
+  list-style: none;
+  position: relative;
+  padding-left: 30px;
+  outline: none;
+}
+.editor-list-item-check:not(.editor-list-item-nested)::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #eee;
+  border-radius: 2px;
+}
+.editor-list-item-check.checked::before {
+  background-color: tomato;
+}
+.editor-list-item-check.checked::after {
+  content: "";
+  position: absolute;
+  display: block;
+  left: 7px;
+  top: 9px;
+  width: 9px;
+  height: 4px;
+  border-bottom: 2px solid #fff;
+  border-left: 2px solid #fff;
+  transform: rotate(-45deg);
+}
+.editor-code {
+  background-color: rgb(240, 242, 245);
+  font-family: Menlo, Consolas, Monaco, monospace;
+  display: block;
+  padding: 8px 8px 8px 52px;
+  line-height: 1.53;
+  font-size: 13px;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  tab-size: 2;
+  overflow-x: auto;
+  position: relative;
+}
+.editor-code::before {
+  content: attr(data-gutter);
+  position: absolute;
+  background-color: #eee;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #ccc;
+  padding: 8px;
+  color: #777;
+  white-space: pre-wrap;
+  text-align: right;
+  min-width: 25px;
+}
