@@ -22,3 +22,12 @@
   flex-wrap: wrap;
   gap: var(--itemGap);
 }
+
+.token.function {
+  color: green;
+}
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #07a;
+}

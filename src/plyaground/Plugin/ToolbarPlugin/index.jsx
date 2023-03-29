@@ -17,20 +17,18 @@ import {
   $isListNode,
   ListNode,
 } from "@lexical/list";
-import { $createCodeNode } from "@lexical/code";
+import {
+  $isCodeNode,
+  $createCodeNode,
+  CODE_LANGUAGE_FRIENDLY_NAME_MAP,
+} from "@lexical/code";
+import { CODE_LANGUAGE_COMMAND } from "../CodeHightPlugin";
 import { $getNearestNodeOfType } from "@lexical/utils";
 import { $setBlocksType } from "@lexical/selection";
 import { useCallback, useEffect, useState } from "react";
 import "./index.css";
 
-const supportBlockTypeSet = [
-  "paragraph",
-  "h1",
-  "h2",
-  "h3",
-  "blockquote",
-  "code",
-];
+const supportBlockTypeSet = ["paragraph", "h1", "h2", "h3", "blockquote"];
 
 const supportListTypeSet = ["bullet", "number", "check"];
 
@@ -38,6 +36,7 @@ export const ToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext();
 
   const [blockType, setBlockType] = useState(supportBlockTypeSet[0]);
+  const [codeLanguage, setCodeLanguage] = useState("js");
   const formatList = useCallback(
     (type) => {
       // dispatch的commands需要提前register；所以你需要加载对应的Plugin（ListPlugin 和 CheckListPlugin）
@@ -70,13 +69,14 @@ export const ToolbarPlugin = () => {
           }
           if (formatType === "blockquote") return $createQuoteNode();
           if (formatType === "code") {
-            return $createCodeNode("javascript");
+            setCodeLanguage("js");
+            return $createCodeNode("js");
           }
           return $createHeadingNode(formatType);
         });
       });
     },
-    [editor, blockType]
+    [editor, blockType, setCodeLanguage]
   );
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
@@ -99,6 +99,9 @@ export const ToolbarPlugin = () => {
             parentList ? parentList.getListType() : targetNode.getListType()
           );
         }
+        if ($isCodeNode(targetNode)) {
+          setCodeLanguage(targetNode.getLanguage());
+        }
         setBlockType(targetNode.getType());
       });
     });
@@ -117,6 +120,20 @@ export const ToolbarPlugin = () => {
           {type}
         </span>
       ))}
+      <span
+        aria-label="code"
+        className="toolbar-btn"
+        aria-checked={blockType === "code"}
+        onClick={() => formatBlock("code")}
+      >
+        code
+      </span>
+      {blockType === "code" && (
+        <CodeSelect
+          codeLanguage={codeLanguage}
+          setCodeLanguage={setCodeLanguage}
+        />
+      )}
       {supportListTypeSet.map((type) => (
         <span
           key={type}
@@ -129,5 +146,26 @@ export const ToolbarPlugin = () => {
         </span>
       ))}
     </div>
+  );
+};
+
+const CodeSelect = (props) => {
+  const { codeLanguage } = props;
+
+  const [editor] = useLexicalComposerContext();
+
+  const onSelectChange = useCallback(
+    (e) => editor.dispatchCommand(CODE_LANGUAGE_COMMAND, e.target.value),
+    [editor]
+  );
+
+  return (
+    <select value={codeLanguage} onChange={onSelectChange}>
+      {Object.keys(CODE_LANGUAGE_FRIENDLY_NAME_MAP).map((language) => (
+        <option key={language} value={language}>
+          {CODE_LANGUAGE_FRIENDLY_NAME_MAP[language]}
+        </option>
+      ))}
+    </select>
   );
 };

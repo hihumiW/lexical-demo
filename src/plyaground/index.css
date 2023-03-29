@@ -15,6 +15,11 @@
 .my-editor-container.active {
   border-color: var(--borderActiveColor);
 }
+.my-editor-toolbar-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
 .my-editor-content {
   outline: none;
 }
@@ -97,7 +102,7 @@
   background-color: rgb(240, 242, 245);
   font-family: Menlo, Consolas, Monaco, monospace;
   display: block;
-  padding: 8px 8px 8px 52px;
+  padding: 16px 8px 8px 52px;
   line-height: 1.53;
   font-size: 13px;
   margin: 0;
@@ -112,11 +117,51 @@
   position: absolute;
   background-color: #eee;
   left: 0;
-  top: 0;
+  top: 8px;
   border-right: 1px solid #ccc;
   padding: 8px;
   color: #777;
   white-space: pre-wrap;
   text-align: right;
   min-width: 25px;
+}
+.editor-code::after {
+  content: attr(data-highlight-language);
+  position: absolute;
+  right: 8px;
+  top: 8px;
+}
+
+.editor-text-underline {
+  text-decoration: underline;
+}
+.editor-text-underlineStrikethrough {
+  text-decoration: underline line-through;
+}
+.editor-text-strikethrough {
+  text-decoration: line-through;
+}
+.editor-text-code {
+  background-color: rgb(240, 242, 245);
+  padding: 1px 0.25rem;
+}
+sub,
+sup {
+  bottom: 0.25em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.editor-text-subscript {
+  font-size: 0.8em;
+  vertical-align: sub;
+}
+.editor-text-superscript {
+  font-size: 0.8em;
+  vertical-align: super;
+}
+.color-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }

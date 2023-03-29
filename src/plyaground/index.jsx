@@ -11,6 +11,7 @@ import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { editorTheme } from "./editorTheme";
 import "./index.css";
 import { ToolbarPlugin } from "./Plugin/ToolbarPlugin";
+import { InlinePlugin } from "./Plugin/InlinePlugin";
 import { IndentPlugin } from "./Plugin/IndentPlugin";
 import { CodeHighLightPlugin } from "./Plugin/CodeHightPlugin";
 
@@ -30,7 +31,10 @@ const Editor = () => {
   return (
     <div className="my-editor-outter-container">
       <LexicalComposer initialConfig={initialConfig}>
-        <ToolbarPlugin />
+        <div className="my-editor-toolbar-container">
+          <ToolbarPlugin />
+          <InlinePlugin />
+        </div>
         <div className="my-editor-container" id={containerId}>
           <RichTextPlugin
             contentEditable={<ContentEditable className="my-editor-content" />}

@@ -16,12 +16,13 @@ export const IndentPlugin = () => {
     return editor.registerCommand(
       KEY_TAB_COMMAND,
       (event) => {
-        event.preventDefault();
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
+          event.preventDefault();
           editor.dispatchCommand(
             event.shiftKey ? OUTDENT_CONTENT_COMMAND : INDENT_CONTENT_COMMAND
           );
+          return true;
         }
         // 让其他KEY_TAB_COMMAND 也能受到处理
         return false;
