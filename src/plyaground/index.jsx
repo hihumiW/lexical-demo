@@ -7,6 +7,7 @@ import { HightLightBorderPlugin } from "./Plugin/HilightBorderPlugin";
 import TreeViewPlugin from "../lexical/plugins/TreeView";
 import { registerNodes } from "./Nodes";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { editorTheme } from "./editorTheme";
 import "./index.css";
@@ -49,6 +50,7 @@ const Editor = () => {
         <HistoryPlugin />
         <IndentPlugin />
         <CodeHighLightPlugin />
+        <LinkPlugin />
       </LexicalComposer>
     </div>
   );

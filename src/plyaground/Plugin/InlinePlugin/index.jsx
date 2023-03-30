@@ -6,6 +6,7 @@ import {
   $isTextNode,
   FORMAT_TEXT_COMMAND,
 } from "lexical";
+import { TOGGLE_LINK_COMMAND } from "@lexical/link";
 import {
   $patchStyleText,
   $getSelectionStyleValueForProperty,
@@ -25,6 +26,7 @@ export const InlinePlugin = () => {
   const [isSuperscript, setIsSuperscript] = useState(false);
   const [color, setColor] = useState("black");
   const [backgroundColor, setBackgroundColor] = useState("white");
+  const [isLink, setIsLink] = useState(false);
   const formatTypes = [
     {
       type: "bold",
@@ -59,6 +61,14 @@ export const InlinePlugin = () => {
       active: isSuperscript,
     },
   ];
+  const formatLink = useCallback(() => {
+    console.log("click");
+    if (isLink) {
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    } else {
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, { url: "http://" });
+    }
+  }, [editor, isLink]);
   const onTextFormatTypeButtonClick = useCallback(
     (textFomartType) => {
       editor.dispatchCommand(FORMAT_TEXT_COMMAND, textFomartType);
@@ -69,48 +79,56 @@ export const InlinePlugin = () => {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         const selection = $getSelection();
-        setIsBold(selection.hasFormat("bold"));
-        setIsItalic(selection.hasFormat("italic"));
-        setIsUnderline(selection.hasFormat("underline"));
-        setIsStrikethrough(selection.hasFormat("strikethrough"));
-        setIsHighlight(selection.hasFormat("highlight"));
-        setIsCode(selection.hasFormat("code"));
-        setIsSubscript(selection.hasFormat("subscript"));
-        setIsSuperscript(selection.hasFormat("superscript"));
-        setColor(
-          $getSelectionStyleValueForProperty(selection, "color", "#000")
-        );
-        const anchor = selection.anchor.getNode();
-        if (anchor) {
-          // if ($isTextNode(anchor)) {
-          //   anchor.splitText(1, 2);
-          // }
+        if ($isRangeSelection(selection)) {
+          setIsBold(selection.hasFormat("bold"));
+          setIsItalic(selection.hasFormat("italic"));
+          setIsUnderline(selection.hasFormat("underline"));
+          setIsStrikethrough(selection.hasFormat("strikethrough"));
+          setIsHighlight(selection.hasFormat("highlight"));
+          setIsCode(selection.hasFormat("code"));
+          setIsSubscript(selection.hasFormat("subscript"));
+          setIsSuperscript(selection.hasFormat("superscript"));
+          setColor(
+            $getSelectionStyleValueForProperty(selection, "color", "black")
+          );
+          setBackgroundColor(
+            $getSelectionStyleValueForProperty(selection, "background", "white")
+          );
+          // 判断是否是link selection内的所有TextNode是否都在同一个link下
         }
-        // if (anchor) {
-        //   console.log(anchor.getNode().splitText(1, 2));
-        // }
       });
     });
   }, []);
 
   return (
-    <div className="editor-toolbar-container">
-      {formatTypes.map(({ type, active }) => (
+    <>
+      <div className="editor-toolbar-container">
+        {formatTypes.map(({ type, active }) => (
+          <span
+            className="toolbar-btn"
+            key={type}
+            aria-checked={active}
+            onClick={() => onTextFormatTypeButtonClick(type)}
+          >
+            {type}
+          </span>
+        ))}
+      </div>
+      <div className="editor-toolbar-container">
+        <ColorSelect color={color} editor={editor} />
+        <BackgroundColorSelect
+          backgroundColor={backgroundColor}
+          editor={editor}
+        />
         <span
           className="toolbar-btn"
-          key={type}
-          aria-checked={active}
-          onClick={() => onTextFormatTypeButtonClick(type)}
+          aria-checked={isLink}
+          onClick={formatLink}
         >
-          {type}
+          link
         </span>
-      ))}
-      <ColorSelect color={color} editor={editor} />
-      <BackgroundColorSelect
-        backgroundColor={backgroundColor}
-        editor={editor}
-      />
-    </div>
+      </div>
+    </>
   );
 };
 
@@ -145,18 +163,28 @@ const ColorSelect = (props) => {
   );
 };
 
-const suportBgColorSet = ["tomato", "gold", "blue", "pink"];
+const suportBgColorSet = ["white", "tomato", "gold", "blue", "pink"];
 const BackgroundColorSelect = (props) => {
   const { backgroundColor, editor } = props;
   const onBgColorChange = useCallback(
     (e) => {
       const bgColor = e.target.value;
+
+      editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          $patchStyleText(selection, {
+            background: bgColor,
+          });
+        }
+      });
     },
     [editor]
   );
   return (
     <div className="color-selector">
-      <select value={backgroundColor}>
+      <span>bgColor:</span>
+      <select value={backgroundColor} onChange={onBgColorChange}>
         {suportBgColorSet.map((bgColor) => (
           <option key={bgColor} value={bgColor}>
             {bgColor}
