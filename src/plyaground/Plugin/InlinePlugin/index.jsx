@@ -1,6 +1,11 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useCallback, useEffect, useState } from "react";
-import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from "lexical";
+import {
+  $getSelection,
+  $isRangeSelection,
+  $isTextNode,
+  FORMAT_TEXT_COMMAND,
+} from "lexical";
 import {
   $patchStyleText,
   $getSelectionStyleValueForProperty,
@@ -18,7 +23,8 @@ export const InlinePlugin = () => {
   const [isSubscript, setIsSubscript] = useState(false);
   // superscript　上标
   const [isSuperscript, setIsSuperscript] = useState(false);
-  const [color, setColor] = useState("#000");
+  const [color, setColor] = useState("black");
+  const [backgroundColor, setBackgroundColor] = useState("white");
   const formatTypes = [
     {
       type: "bold",
@@ -71,10 +77,18 @@ export const InlinePlugin = () => {
         setIsCode(selection.hasFormat("code"));
         setIsSubscript(selection.hasFormat("subscript"));
         setIsSuperscript(selection.hasFormat("superscript"));
-        console.log(selection);
         setColor(
           $getSelectionStyleValueForProperty(selection, "color", "#000")
         );
+        const anchor = selection.anchor.getNode();
+        if (anchor) {
+          // if ($isTextNode(anchor)) {
+          //   anchor.splitText(1, 2);
+          // }
+        }
+        // if (anchor) {
+        //   console.log(anchor.getNode().splitText(1, 2));
+        // }
       });
     });
   }, []);
@@ -91,15 +105,18 @@ export const InlinePlugin = () => {
           {type}
         </span>
       ))}
-      <ColorSelect color={color} />
+      <ColorSelect color={color} editor={editor} />
+      <BackgroundColorSelect
+        backgroundColor={backgroundColor}
+        editor={editor}
+      />
     </div>
   );
 };
 
-const suportColorSet = ["#000", "red", "green", "blue", "tomato"];
+const suportColorSet = ["black", "white", "red", "green", "blue", "tomato"];
 const ColorSelect = (props) => {
-  const { color } = props;
-  const [editor] = useLexicalComposerContext();
+  const { color, editor } = props;
   const onTextColorFormat = useCallback(
     (color) => {
       editor.update(() => {
@@ -121,6 +138,28 @@ const ColorSelect = (props) => {
         {suportColorSet.map((color) => (
           <option value={color} key={color}>
             {color}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+const suportBgColorSet = ["tomato", "gold", "blue", "pink"];
+const BackgroundColorSelect = (props) => {
+  const { backgroundColor, editor } = props;
+  const onBgColorChange = useCallback(
+    (e) => {
+      const bgColor = e.target.value;
+    },
+    [editor]
+  );
+  return (
+    <div className="color-selector">
+      <select value={backgroundColor}>
+        {suportBgColorSet.map((bgColor) => (
+          <option key={bgColor} value={bgColor}>
+            {bgColor}
           </option>
         ))}
       </select>
