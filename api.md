@@ -10,3 +10,6 @@
 - $pathStyleText(selection :RangeSelection, path : CSSStyleObject): void;
   将提供的 Style 样式应用到被选中的文本节点上;
   如果只选中了文本节点的一部分，那么会将该文本节点进行 split 然后再应用；
+
+- $isAtNodeEnd(point : Point)
+  判断这个 point 是否是位于该节点的末尾

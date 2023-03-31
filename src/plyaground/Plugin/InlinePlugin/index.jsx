@@ -1,12 +1,7 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useCallback, useEffect, useState } from "react";
-import {
-  $getSelection,
-  $isRangeSelection,
-  $isTextNode,
-  FORMAT_TEXT_COMMAND,
-} from "lexical";
-import { TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from "lexical";
+import { TOGGLE_LINK_COMMAND, $isLinkNode } from "@lexical/link";
 import {
   $patchStyleText,
   $getSelectionStyleValueForProperty,
@@ -94,7 +89,11 @@ export const InlinePlugin = () => {
           setBackgroundColor(
             $getSelectionStyleValueForProperty(selection, "background", "white")
           );
-          // 判断是否是link selection内的所有TextNode是否都在同一个link下
+          //update link
+          const focusNode = selection.focus.getNode();
+          setIsLink(
+            $isLinkNode(focusNode) || $isLinkNode(focusNode.getParent())
+          );
         }
       });
     });
